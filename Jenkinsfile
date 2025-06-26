@@ -29,15 +29,21 @@ pipeline {
                 expression { return env.BRANCH_NAME == "main" }
             }
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'docker-hub-creds',
+                        usernameVariable: 'USERNAME',
+                        passwordVariable: 'PASSWORD'
+                    )
+                ]) {
                     sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
                     sh 'docker push $IMAGE_NAME'
                 }
             }
         }
     }
-}
 
+    post {
         always {
             echo "Pipeline finished with status: ${currentBuild.currentResult}"
         }
